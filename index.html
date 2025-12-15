@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ISS Live Tracker</title>
+  <meta charset="utf-8" />
+
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet/dist/leaflet.css"
+  />
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle at top, #0f2027, #000);
+      color: white;
+      overflow: hidden;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 10px 0 5px;
+      font-size: 22px;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 13px;
+      opacity: 0.8;
+      margin-bottom: 5px;
+    }
+
+    #map {
+      height: 88vh;
+      width: 100%;
+    }
+
+    /* Floating telemetry panel */
+    #live-data {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.75);
+      padding: 12px 16px;
+      border-radius: 14px;
+      color: #00eaff;
+      font-family: monospace;
+      font-size: 14px;
+      z-index: 999;
+      box-shadow: 0 0 20px rgba(0, 234, 255, 0.4);
+    }
+
+    #live-data div {
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>🛰 International Space Station</h1>
+  <div class="subtitle">Live tracking & movement visualization</div>
+
+  <!-- Floating data -->
+  <div id="live-data">
+    <div>🛰 Latitude: <span id="lat">--</span></div>
+    <div>🛰 Longitude: <span id="lon">--</span></div>
+    <div>⚡ Speed: ~27,600 km/h</div>
+  </div>
+
+  <!-- Map -->
+  <div id="map"></div>
+
+  <script>
+    // Create map (zoomed in so movement is visible)
+    const map = L.map("map").setView([0, 0], 4);
+
+    // Dark space map
+    L.tileLayer(
+      "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+      { maxZoom: 6 }
+    ).addTo(map);
+
+    // Small satellite icon
+    const issIcon = L.icon({
+      iconUrl: "https://cdn-icons-png.flaticon.com/512/2942/2942869.png",
+      iconSize: [32, 32],
+      iconAnchor: [16, 16]
+    });
+
+    // ISS marker
+    let issMarker = L.marker([0, 0], { icon: issIcon }).addTo(map);
+
+    // Path trail (movement proof)
+    let path = L.polyline([], {
+      color: "#00eaff",
+      weight: 3
+    }).addTo(map);
+
+    // Direction arrow (dashed line)
+    let directionArrow = L.polyline([], {
+      color: "cyan",
+      weight: 2,
+      dashArray: "6,6"
+    }).addTo(map);
+
+    async function updateISS() {
+      const res = await fetch("/iss");
+      const data = await res.json();
+
+      const lat = data.lat;
+      const lon = data.lon;
+
+      // Move ISS smoothly
+      issMarker.setLatLng([lat, lon], { animate: true });
+      map.panTo([lat, lon], { animate: true });
+
+      // Update trail
+      path.addLatLng([lat, lon]);
+
+      // Fake forward direction arrow (visual)
+      directionArrow.setLatLngs([
+        [lat, lon],
+        [lat + 1.2, lon + 2.5]
+      ]);
+
+      // Update live data
+      document.getElementById("lat").innerText = lat.toFixed(2);
+      document.getElementById("lon").innerText = lon.toFixed(2);
+    }
+
+    // Initial + realtime updates
+    updateISS();
+    setInterval(updateISS, 2000);
+  </script>
+
+</body>
+</html>
+<div id="credit">
+  Built by Rishabh Sharma 🚀
+</div>

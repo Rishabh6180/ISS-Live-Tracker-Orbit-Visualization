@@ -1,0 +1,50 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(120deg, #0f2027, #203a43, #2c5364);
+    color: white;
+    text-align: center;
+}
+
+h1 {
+    margin-top: 10px;
+}
+
+.sub {
+    opacity: 0.8;
+}
+
+#map {
+    height: 80vh;
+    width: 95%;
+    margin: 10px auto;
+    border-radius: 15px;
+    box-shadow: 0 0 20px black;
+}
+#live-data {
+    position: fixed;
+    top: 90px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 12px 16px;
+    border-radius: 12px;
+    color: #00eaff;
+    font-family: monospace;
+    font-size: 14px;
+    z-index: 999;
+    box-shadow: 0 0 20px rgba(0, 234, 255, 0.4);
+}
+#credit {
+  position: fixed;
+  bottom: 12px;
+  left: 14px;
+  font-size: 12px;
+  font-family: monospace;
+  color: rgba(0, 234, 255, 0.7);
+  background: rgba(0, 0, 0, 0.4);
+  padding: 6px 10px;
+  border-radius: 10px;
+  z-index: 999;
+  letter-spacing: 0.5px;
+}
+
